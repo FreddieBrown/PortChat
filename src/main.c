@@ -8,6 +8,7 @@
 #include <memory.h>
 #include <arpa/inet.h>
 #include <netdb.h>
+#include "threads.c"
 
 void GetPrimaryIp(char *, size_t);
 
@@ -54,16 +55,19 @@ int main(int argc, char * argv[]) {
         valread = read(new_socket, buffer, 1024);
         char * exit = "exit\n";
         printf("%s\n", buffer);
-        char * message = "\nAck\n";
+        char * message = "\nAck\n\n";
         send(new_socket, message, strlen(message), 0);
         char data;
-        recv(new_socket,&data,1, MSG_PEEK);
         flag = strcmp(buffer, exit);
+        if(!flag){
+            close(new_socket);
+        }
+        recv(new_socket,&data,1, MSG_PEEK);
         memset(buffer, 0, sizeof(buffer));
     }while(flag);
 
     close(new_socket);
-    
+
     return 0;
 }
 
@@ -86,7 +90,7 @@ void GetPrimaryIp(char* buffer, size_t buflen)
     socklen_t namelen = sizeof(name);
     err = getsockname(sock, (struct sockaddr*) &name, &namelen);
 
-    const char* p = inet_ntop(AF_INET, &name.sin_addr, buffer, buflen);
+    inet_ntop(AF_INET, &name.sin_addr, buffer, buflen);
 
     close(sock);
 }

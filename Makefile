@@ -22,7 +22,7 @@ ${OBJDIR}/%.o: ${SRCDIR}/%.c
 .PHONY: clean
 
 run: 
-	./${TARGET}
+	./${TARGET} $(port)
 
 clean:
 	rm -f ${OBJDIR}/*.o ${TARGET}
