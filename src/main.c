@@ -8,7 +8,8 @@
 #include <memory.h>
 #include <arpa/inet.h>
 #include <netdb.h>
-#include "threads.c"
+#include <pthread.h>
+#include "threads.h"
 
 void GetPrimaryIp(char *, size_t);
 
@@ -50,6 +51,7 @@ int main(int argc, char * argv[]) {
         perror("accept");
         exit(EXIT_FAILURE);
     }
+    // Create threads to listen to STDIN and traffic over port
     int flag = 1;
     do{
         valread = read(new_socket, buffer, 1024);
@@ -66,6 +68,7 @@ int main(int argc, char * argv[]) {
         memset(buffer, 0, sizeof(buffer));
     }while(flag);
 
+    // Clean up
     close(new_socket);
 
     return 0;

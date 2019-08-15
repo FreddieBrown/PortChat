@@ -1,2 +1,3 @@
 obj/
 -Wno-atomic-implicit-seq-cst
+.vscode/
