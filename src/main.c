@@ -52,11 +52,21 @@ int main(int argc, char * argv[]) {
         exit(EXIT_FAILURE);
     }
     // Create threads to listen to STDIN and traffic over port
+    // Need to create port info struct 
+    // Need to create ids
+    struct thread * create = malloc(sizeof(struct thread));
+    struct thread * readM = malloc(sizeof(struct thread));
+    readM->socket = new_socket;
+    struct thread * sendM = malloc(sizeof(struct thread));
+    sendM->socket = new_socket;
+    if(pthread_create(&(create->id), NULL, createMessage, (void *) create) != 0){
+        printf("Error didn't create thread\n");
+    }
     int flag = 1;
     do{
         valread = read(new_socket, buffer, 1024);
         char * exit = "exit\n";
-        printf("%s\n", buffer);
+        printf("From Client: %s\n", buffer);
         char * message = "\nAck\n\n";
         send(new_socket, message, strlen(message), 0);
         char data;
@@ -70,6 +80,10 @@ int main(int argc, char * argv[]) {
 
     // Clean up
     close(new_socket);
+    pthread_join(create->id, NULL);
+    free(create);
+    free(sendM);
+    free(readM);
 
     return 0;
 }

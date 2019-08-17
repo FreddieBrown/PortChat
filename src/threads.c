@@ -40,11 +40,13 @@ void* createMessage(void* arg){
     // Read from command line, create message 
     // and pass it to message queue
     int flag = 1;
-    char* buffer = malloc(256 * sizeof(char));
+    char buffer[1024] = {0};
     while(flag) {
-        scanf("%s\n", buffer);
+        memset(buffer, 0, sizeof(buffer));
+        scanf("%s[\n]", buffer);
         // Add to message queue
         printf("Output: %s\n", buffer);
-        memset(buffer, 0, sizeof(buffer));
+
     }
+    return arg;
 }
