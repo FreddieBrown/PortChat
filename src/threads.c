@@ -15,6 +15,7 @@ void* sendMessage(void * arg) {
             printf("Length: %i\n", que->len);
             struct data * dat = pull(que);
             send(info->socket, dat->message, strlen(dat->message), 0);
+            free(dat);
         }
     }while(flag);
     return arg;
@@ -37,7 +38,6 @@ void* createMessage(void* arg){
         struct data * dat = malloc(sizeof(struct data));
         dat->message = buffer;
         push(dat, info->que);
-        printf("%i\n", info->que->len);
         // Add to message queue
         printf("Output: %s\n", buffer);
 

@@ -1,0 +1,5 @@
+language: c
+compiler: gcc
+before_script:
+  - make build && make run port=8080
+  
