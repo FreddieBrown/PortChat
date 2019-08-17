@@ -4,7 +4,8 @@
 #include "tools.h"
 
 int main(int argc, char * argv[]) {
-    int socket = setup(argv[1]);
+    int sock = setup(argv[1]);
+    printf("Socket: %i\n", sock);
     int valread;
     char buffer[1024] = {0};
 
@@ -20,7 +21,7 @@ int main(int argc, char * argv[]) {
     struct thread * sendM = malloc(sizeof(struct thread));
     sendM->flag = 0;
     sendM->que = que;
-    sendM->socket = socket;
+    sendM->socket = sock;
     if(pthread_create(&(create->id), NULL, createMessage, (void *) create) != 0){
         printf("Error didn't create thread\n");
     }
@@ -29,22 +30,22 @@ int main(int argc, char * argv[]) {
     }
     int flag = 1;
     do{
-        valread = read(socket, buffer, 1024);
+        valread = read(sock, buffer, 1024);
         char * exit = "exit\n";
         printf("From Client: %s\n", buffer);
-        char * message = "\nAck\n\n";
-        send(socket, message, strlen(message), 0);
+        // char * message = "\nAck\n\n";
+        // send(sock, message, strlen(message), 0);
         char data;
         flag = strcmp(buffer, exit);
         if(!flag){
-            close(socket);
+            close(sock);
         }
-        recv(socket,&data,1, MSG_PEEK);
+        recv(sock,&data,1, MSG_PEEK);
         memset(buffer, 0, sizeof(buffer));
     }while(flag);
 
     // Clean up
-    close(socket);
+    close(sock);
     // Set a flag telling it to close
     printf("Closing down Main function\n");
     create->flag = 1;
