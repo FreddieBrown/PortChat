@@ -1,7 +1,6 @@
 #include "queue.h"
 
 void init_q(struct queue * que) {
-
     que->front = NULL;
     que->rear = NULL;
     que->len = 0;
