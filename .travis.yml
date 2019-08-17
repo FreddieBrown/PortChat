@@ -1,5 +1,7 @@
 language: c
 compiler: gcc
+sudo: yes
 before_script:
+  - mkdir obj
   - make build && make run port=8080
-  
+
