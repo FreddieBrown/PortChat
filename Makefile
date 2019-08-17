@@ -1,5 +1,5 @@
 CC := gcc
-CFLAGS := -Wall -Wextra -std=c99
+CFLAGS := -Wall -Wextra -std=c99 
 TARGET := main
 
 SRCDIR := src
@@ -12,6 +12,9 @@ default: build
 
 debug: CFLAGS += -g
 debug: build
+
+linux: CFLAGS += -lpthread
+linux: build
 	
 build: ${OBJ}
 	${CC} ${CFLAGS} ${OBJ} -o ${TARGET}
