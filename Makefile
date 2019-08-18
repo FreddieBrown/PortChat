@@ -1,5 +1,5 @@
 CC := gcc
-CFLAGS := -Wall -Wextra -Werror -std=c99 -lpthread
+CFLAGS := -Wall -Wextra -Werror -std=c99 -pthread
 TARGET := main
 
 SRCDIR := src
