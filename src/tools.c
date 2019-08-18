@@ -13,7 +13,6 @@
  */
 void get_primary_ip(char* buffer, size_t buflen)
 {
-
     int sock = socket(AF_INET, SOCK_DGRAM, 0);
 
     const char* kGoogleDnsIp = "8.8.8.8";
@@ -51,6 +50,7 @@ int setup(char * port) {
     int opt = 1;
     int addrlen = sizeof(address);
     char hostbuffer[256];
+
     get_primary_ip(hostbuffer, sizeof(hostbuffer));
     printf("%s\n", hostbuffer);
     printf("This is the port: %s\n", port);
@@ -66,21 +66,20 @@ int setup(char * port) {
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(atoi(port));
 
-    if(bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0) {
-
+    if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0) {
         perror("bind failed");
         exit(EXIT_FAILURE);
     }
 
-    if(listen(server_fd, 3) < 0) {
-
+    if (listen(server_fd, 3) < 0) {
         perror("listen");
         exit(EXIT_FAILURE);
     }
 
-    if((new_socket = accept(server_fd, (struct sockaddr *) &address, (socklen_t*) &addrlen)) < 0) {
+    if ((new_socket = accept(server_fd, (struct sockaddr *) &address, (socklen_t*) &addrlen)) < 0) {
         perror("accept");
         exit(EXIT_FAILURE);
     }
+
     return new_socket;
 }

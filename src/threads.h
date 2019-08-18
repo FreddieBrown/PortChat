@@ -7,8 +7,7 @@ typedef struct thread{
     pthread_t id;
     int socket;
     int * flag;
-
-}thread;
+} thread;
 
 void* sendMessage(void * arg);
 void* createMessage(void* arg);

@@ -14,16 +14,18 @@ void* createMessage(void* arg){
     char buffer[1024] = {0};
     // Read from command line, create message
     // and pass it to message queue
-    while(1) {
+    while (1) {
         fgets (buffer, 100, stdin);
         send(info->socket, buffer, strlen(buffer), 0);
-        if(!*(info->flag)){
+
+        if (!*(info->flag)){
             printf("Goodbye\n");
             return arg;
         }
-        memset(buffer, 0, sizeof(buffer));
 
+        memset(buffer, 0, sizeof(buffer));
     }
+
     return arg;
 }
 
@@ -44,7 +46,7 @@ void* readMessage(void* arg){
     char buffer[1024] = {0};
     // Read from command line, create message
     // and pass it to message queue
-    do{
+    do {
         valread = read(info->socket, buffer, 1024);
         char * exit = "exit\n";
         printf("From Client: %s", buffer);
@@ -56,6 +58,7 @@ void* readMessage(void* arg){
         }
         recv(info->socket,&data,1, MSG_PEEK);
         memset(buffer, 0, sizeof(buffer));
-    }while(1);
+    } while (1);
+
     return arg;
 }
