@@ -2,7 +2,8 @@ language: c
 compiler: gcc
 sudo: yes
 before_script:
-  - apt install libpthread-stubs0-dev
+  - sudo apt-get -y update
+  - sudo apt install -y libpthread-stubs0-dev
   - mkdir obj
   - make build && make run port=8080
 
