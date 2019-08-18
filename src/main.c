@@ -18,6 +18,11 @@
  * @return int
  */
 int main(int argc, char * argv[]) {
+    if (argc < 2) {
+        fprintf(stderr, "Please enter a port number to use for the setup.\n");
+        return 1;
+    }
+
     int sock = setup(argv[1]);
     printf("Socket: %i\n", sock);
     int flag = 1;
