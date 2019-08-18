@@ -15,7 +15,7 @@ debug: build
 
 linux: CFLAGS += -lpthread
 linux: build
-	
+
 build: ${OBJ}
 	${CC} ${CFLAGS} ${OBJ} -o ${TARGET}
 
@@ -24,7 +24,7 @@ ${OBJDIR}/%.o: ${SRCDIR}/%.c
 
 .PHONY: clean
 
-run: 
+run:
 	./${TARGET} $(port)
 
 clean:
