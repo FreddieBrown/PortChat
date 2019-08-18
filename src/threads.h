@@ -1,6 +1,8 @@
 #ifndef THREADS_H
 #define THREADS_H
 
+#include <pthread.h>
+
 #include "tools.h"
 
 typedef struct thread{

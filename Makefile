@@ -1,5 +1,5 @@
 CC := gcc
-CFLAGS := -Wall -Wextra -std=c99 
+CFLAGS := -Wall -Wextra -Werror -std=c99
 TARGET := main
 
 SRCDIR := src

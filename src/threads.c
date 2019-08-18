@@ -47,12 +47,16 @@ void* createMessage(void* arg){
  */
 void* readMessage(void* arg){
 	thread* info = (thread*) arg;
-	int valread;
 	char buffer[1024] = {0};
 	// Read from command line, create message
 	// and pass it to message queue
 	do {
-		valread = read(info->socket, buffer, 1024);
+		int valread = read(info->socket, buffer, 1024);
+
+		if (valread) {
+			fprintf(stderr, "Failed to read from the socket into the buffer.\n");
+		}
+
 		char* exit = "exit\n";
 		printf("From Client: %s", buffer);
 		char data;

@@ -34,9 +34,17 @@ void get_primary_ip(char* buffer, size_t buflen)
 
 	int err = connect(sock, (const struct sockaddr*) &serv, sizeof(serv));
 
+	if (err) {
+		fprintf(stderr, "Failed to connect to the socket.\n");
+	}
+
 	struct sockaddr_in name;
 	socklen_t namelen = sizeof(name);
 	err = getsockname(sock, (struct sockaddr*) &name, &namelen);
+
+	if (err) {
+		fprintf(stderr, "Failed to get the socket name.\n");
+	}
 
 	inet_ntop(AF_INET, &name.sin_addr, buffer, buflen);
 
