@@ -11,7 +11,7 @@
  * @param buffer buffer which data is read into 
  * @param buflen length of buffer which data is read into
  */
-void GetPrimaryIp(char* buffer, size_t buflen) 
+void get_primary_ip(char* buffer, size_t buflen) 
 {
 
     int sock = socket(AF_INET, SOCK_DGRAM, 0);
@@ -51,7 +51,7 @@ int setup(char * port) {
     int opt = 1;
     int addrlen = sizeof(address);
     char hostbuffer[256];
-    GetPrimaryIp(hostbuffer, sizeof(hostbuffer));
+    get_primary_ip(hostbuffer, sizeof(hostbuffer));
     printf("%s\n", hostbuffer);
     printf("This is the port: %s\n", port);
     

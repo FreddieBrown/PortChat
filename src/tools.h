@@ -13,7 +13,7 @@
 #include <netdb.h>
 #include <pthread.h>
 
-void GetPrimaryIp(char *, size_t);
+void get_primary_ip(char *, size_t);
 int setup(char * port);
 
 #endif
