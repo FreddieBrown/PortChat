@@ -4,14 +4,14 @@
 
 /**
  * @brief Main function
- * 
- * This function will create the thread structs and will 
- * start up the threads. It will then wait for them to 
+ *
+ * This function will create the thread structs and will
+ * start up the threads. It will then wait for them to
  * finish before clearing up.
- * 
- * @param argc 
- * @param argv 
- * @return int 
+ *
+ * @param argc
+ * @param argv
+ * @return int
  */
 int main(int argc, char * argv[]) {
     int sock = setup(argv[1]);
@@ -20,7 +20,7 @@ int main(int argc, char * argv[]) {
 
 
     // Create threads to listen to STDIN and traffic over port
-    // Need to create port info struct 
+    // Need to create port info struct
     // Need to create ids
     struct thread * create = malloc(sizeof(struct thread));
     create->flag = &flag;
@@ -36,7 +36,7 @@ int main(int argc, char * argv[]) {
     }
 
     // Clean up
-    
+
     pthread_join(create->id, NULL);
     pthread_join(readM->id, NULL);
     free(create);
