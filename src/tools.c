@@ -53,7 +53,7 @@ void get_primary_ip(char* buffer, size_t buflen)
  * @param port port which user wishes to connect to
  * @return int socket details
  */
-int setup(char * port) {
+int setup(char* port) {
     int server_fd, new_socket;
     struct sockaddr_in address;
     int opt = 1;
@@ -75,7 +75,7 @@ int setup(char * port) {
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(atoi(port));
 
-    if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0) {
+    if (bind(server_fd, (struct sockaddr*)&address, sizeof(address)) < 0) {
         perror("bind failed");
         exit(EXIT_FAILURE);
     }
@@ -85,7 +85,7 @@ int setup(char * port) {
         exit(EXIT_FAILURE);
     }
 
-    if ((new_socket = accept(server_fd, (struct sockaddr *) &address, (socklen_t*) &addrlen)) < 0) {
+    if ((new_socket = accept(server_fd, (struct sockaddr*) &address, (socklen_t*) &addrlen)) < 0) {
         perror("accept");
         exit(EXIT_FAILURE);
     }

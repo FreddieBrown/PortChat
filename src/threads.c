@@ -15,7 +15,7 @@
  * @return void* struct which was passed into the function
  */
 void* createMessage(void* arg){
-    thread * info = (thread*) arg;
+    thread* info = (thread*) arg;
     char buffer[1024] = {0};
     // Read from command line, create message
     // and pass it to message queue
@@ -46,14 +46,14 @@ void* createMessage(void* arg){
  * @return void* struct which was passed into the function
  */
 void* readMessage(void* arg){
-    thread * info = (thread*) arg;
+    thread* info = (thread*) arg;
     int valread;
     char buffer[1024] = {0};
     // Read from command line, create message
     // and pass it to message queue
     do {
         valread = read(info->socket, buffer, 1024);
-        char * exit = "exit\n";
+        char* exit = "exit\n";
         printf("From Client: %s", buffer);
         char data;
         *(info->flag) = strcmp(buffer, exit);

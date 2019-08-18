@@ -6,10 +6,10 @@
 typedef struct thread{
     pthread_t id;
     int socket;
-    int * flag;
+    int* flag;
 } thread;
 
-void* sendMessage(void * arg);
+void* sendMessage(void* arg);
 void* createMessage(void* arg);
 void* readMessage(void* arg);
 
