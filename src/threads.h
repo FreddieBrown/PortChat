@@ -4,9 +4,9 @@
 #include "tools.h"
 
 typedef struct thread{
-    pthread_t id;
-    int socket;
-    int* flag;
+	pthread_t id;
+	int socket;
+	int* flag;
 } thread;
 
 void* sendMessage(void* arg);
