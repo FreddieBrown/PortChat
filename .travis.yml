@@ -2,6 +2,7 @@ language: c
 compiler: gcc
 sudo: yes
 before_script:
+  - apt install libpthread-stubs0-dev
   - mkdir obj
   - make build && make run port=8080
 
