@@ -1,5 +1,16 @@
 #include "tools.h"
 
+/**
+ * @brief Get the local IP information of the computer
+ * 
+ * This will make a UDP connection which will give back 
+ * information on the local IP of the machine. This is then 
+ * written to the buffer and the method finishes. The UDP 
+ * socket which was opened, is closed.
+ * 
+ * @param buffer buffer which data is read into 
+ * @param buflen length of buffer which data is read into
+ */
 void GetPrimaryIp(char* buffer, size_t buflen) 
 {
 
@@ -24,6 +35,16 @@ void GetPrimaryIp(char* buffer, size_t buflen)
     close(sock);
 }
 
+/**
+ * @brief Sets up the TCP port connection
+ * 
+ * Starts a conneciton with a client via a socket. 
+ * This is all done in this method before returning 
+ * the socket details.
+ * 
+ * @param port port which user wishes to connect to
+ * @return int socket details
+ */
 int setup(char * port) {
     int server_fd, new_socket;
     struct sockaddr_in address;
