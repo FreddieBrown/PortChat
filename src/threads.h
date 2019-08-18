@@ -1,16 +1,17 @@
 #ifndef THREADS_H
 #define THREADS_H
 
+#include <pthread.h>
+
 #include "tools.h"
 
 typedef struct thread{
-    pthread_t id;
-    int socket;
-    int * flag;
+	pthread_t id;
+	int socket;
+	int* flag;
+} thread;
 
-}thread;
-
-void* sendMessage(void * arg);
+void* sendMessage(void* arg);
 void* createMessage(void* arg);
 void* readMessage(void* arg);
 

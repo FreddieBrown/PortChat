@@ -1,5 +1,5 @@
 CC := gcc
-CFLAGS := -Wall -Wextra -std=c99 
+CFLAGS := -Wall -Wextra -Werror -std=c99 -pthread
 TARGET := main
 
 SRCDIR := src
@@ -13,9 +13,6 @@ default: build
 debug: CFLAGS += -g
 debug: build
 
-linux: CFLAGS += -lpthread
-linux: build
-	
 build: ${OBJ}
 	${CC} ${CFLAGS} ${OBJ} -o ${TARGET}
 
@@ -24,7 +21,7 @@ ${OBJDIR}/%.o: ${SRCDIR}/%.c
 
 .PHONY: clean
 
-run: 
+run:
 	./${TARGET} $(port)
 
 clean:
