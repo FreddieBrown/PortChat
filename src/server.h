@@ -1,5 +1,5 @@
-#ifndef THREADS_H
-#define THREADS_H
+#ifndef SERVER_H
+#define SERVER_H
 
 #include <pthread.h>
 

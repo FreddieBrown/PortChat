@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <sys/socket.h>
 
-#include "threads.h"
+#include "server.h"
 
 /**
  * @brief Creates and sends a message
@@ -53,7 +53,7 @@ void* readMessage(void* arg){
 	do {
 		int valread = read(info->socket, buffer, 1024);
 
-		if (valread) {
+		if (!valread) {
 			fprintf(stderr, "Failed to read from the socket into the buffer.\n");
 		}
 
