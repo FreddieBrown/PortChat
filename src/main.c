@@ -1,96 +1,97 @@
-#include <unistd.h> 
-#include <stdio.h> 
-#include <sys/socket.h> 
-#include <stdlib.h> 
-#include <netinet/in.h> 
-#include <string.h> 
-#include <errno.h>
-#include <memory.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#include "threads.c"
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <unistd.h>
+#include "server.h"
+#include "tools.h"
 
-void GetPrimaryIp(char *, size_t);
+void client(int port, char * addr);
+void server(int port);
+/**
+ * @brief Main function
+ *
+ * This function will create the thread structs and will
+ * start up the threads. It will then wait for them to
+ * finish before clearing up.
+ *
+ * @param argc
+ * @param argv
+ * @return int
+ */
+int main(int argc, char* argv[]) {
+	if (argc < 2) {
+		fprintf(stderr, "Please enter a port number to use for the setup.\n");
+		return 1;
+	}
 
-int main(int argc, char * argv[]) {
-    int server_fd, new_socket, valread;
-    struct sockaddr_in address;
-    char * port = argv[1];
-    int opt = 1;
-    int addrlen = sizeof(address);
-    char buffer[1024] = {0};
-    char hostbuffer[256];
-    GetPrimaryIp(hostbuffer, sizeof(hostbuffer));
-    printf("%s\n", hostbuffer);
-    printf("This is the port: %s\n", port);
-    if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
-        perror("socket failure");
-        exit(EXIT_FAILURE);
+    if(strcmp("-c", argv[1]) == 0 || strcmp("--client", argv[1]) == 0) {
+        int sock = atoi(argv[3]);
+        char * addr = argv[2];
+        printf("CLIENT Socket: %i\n", sock);
+        client(sock, addr);
     }
-
-    setsockopt(server_fd, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt));
-
-    address.sin_family = AF_INET;
-    address.sin_addr.s_addr = INADDR_ANY;
-    address.sin_port = htons(atoi(port));
-
-    if(bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0) {
-
-        perror("bind failed");
-        exit(EXIT_FAILURE);
+    else if(strcmp("-s", argv[1]) == 0 || strcmp("--server", argv[1]) == 0) {
+        int sock = setup_server(argv[2]);
+        printf("SERVER Socket: %i\n", sock);
+        server(sock);
     }
-
-    if(listen(server_fd, 3) < 0) {
-
-        perror("listen");
-        exit(EXIT_FAILURE);
+    else {
+        printf( "This is the help function!\n");
     }
-
-    if((new_socket = accept(server_fd, (struct sockaddr *) &address, (socklen_t*) &addrlen)) < 0) {
-        perror("accept");
-        exit(EXIT_FAILURE);
-    }
-    int flag = 1;
-    do{
-        valread = read(new_socket, buffer, 1024);
-        char * exit = "exit\n";
-        printf("%s\n", buffer);
-        char * message = "\nAck\n\n";
-        send(new_socket, message, strlen(message), 0);
-        char data;
-        flag = strcmp(buffer, exit);
-        if(!flag){
-            close(new_socket);
-        }
-        recv(new_socket,&data,1, MSG_PEEK);
-        memset(buffer, 0, sizeof(buffer));
-    }while(flag);
-
-    close(new_socket);
-
-    return 0;
+	return 0;
 }
 
-void GetPrimaryIp(char* buffer, size_t buflen) 
-{
+/**
+ * @brief Setup clientside functionality
+ * 
+ * This side is given an address and port and 
+ * connects to a server. This will then listen 
+ * to input from a server and will be able to send 
+ * messages to the server.
+ * 
+ * @param port port to connect tp
+ * @param addr address to connec to
+ */
+void client(int port, char * addr) {
+    //int flag = 1;
+    printf("PORT: %i ADDR: %s\n", port, addr);
+    close(port);
+}
 
-    int sock = socket(AF_INET, SOCK_DGRAM, 0);
 
-    const char* kGoogleDnsIp = "8.8.8.8";
-    uint16_t kDnsPort = 53;
-    struct sockaddr_in serv;
-    memset(&serv, 0, sizeof(serv));
-    serv.sin_family = AF_INET;
-    serv.sin_addr.s_addr = inet_addr(kGoogleDnsIp);
-    serv.sin_port = htons(kDnsPort);
+/**
+ * @brief Setup server functionality
+ * 
+ * This function deals with server specific setup and 
+ * cleaning. It creates 2 threads which are used to getting 
+ * messages from STDIN and then sending them to a connected 
+ * client. The other thread will listen to the port for messages 
+ * from the connected client.
+ * 
+ * @param port port which has been setup to listen/send
+ */
+void server(int port) {
+    int flag = 1;
+	struct thread* create = malloc(sizeof(struct thread));
+	create->flag = &flag;
+	create->socket = port;
 
-    int err = connect(sock, (const struct sockaddr*) &serv, sizeof(serv));
+	struct thread* readM = malloc(sizeof(struct thread));
+	readM->flag = &flag;
+	readM->socket = port;
 
-    struct sockaddr_in name;
-    socklen_t namelen = sizeof(name);
-    err = getsockname(sock, (struct sockaddr*) &name, &namelen);
+	if(pthread_create(&(create->id), NULL, createMessage, (void*) create) != 0){
+		printf("Error didn't create thread\n");
+	}
+	if(pthread_create(&(readM->id), NULL, readMessage, (void*) readM) != 0){
+		printf("Error didn't create thread\n");
+	}
 
-    inet_ntop(AF_INET, &name.sin_addr, buffer, buflen);
-
-    close(sock);
+	// Clean up
+	pthread_join(create->id, NULL);
+	pthread_join(readM->id, NULL);
+	free(create);
+	free(readM);
+	close(port);
 }
