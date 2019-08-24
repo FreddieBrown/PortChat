@@ -52,51 +52,70 @@ void get_primary_ip(char* buffer, size_t buflen)
 }
 
 /**
- * @brief Sets up the TCP port connection
+ * @brief Creates and sends a message
  *
- * Starts a conneciton with a client via a socket.
- * This is all done in this method before returning
+ * Takes in a thread struct and uses it to send
+ * messages via an open port from the commandline.
+ *
+ * @param arg Informaiton for the thread
+ * @return void* struct which was passed into the function
+ */
+void* createMessage(void* arg){
+	thread* info = (thread*) arg;
+	char buffer[1024] = {0};
+	// Read from command line, create message
+	// and pass it to message queue
+	while (1) {
+		fgets (buffer, 100, stdin);
+		send(info->socket, buffer, strlen(buffer), 0);
+
+		if (!*(info->flag)){
+			printf("Goodbye\n");
+			return arg;
+		}
+
+		memset(buffer, 0, sizeof(buffer));
+	}
+
+	return arg;
+}
+
+/**
+ * @brief Listens to open port
+ *
+ * Listens to an open port and will print any
+ * input over this connection. It takes in a thread
+ * struct as a void argument and uses this to find
  * the socket details.
  *
- * @param port port which user wishes to connect to
- * @return int socket details
+ * @param arg Informaiton for the thread
+ * @return void* struct which was passed into the function
  */
-int setup_server(char* port) {
-	int server_fd, new_socket;
-	struct sockaddr_in address;
-	int opt = 1;
-	int addrlen = sizeof(address);
-	char hostbuffer[256];
+void* readMessage(void* arg){
+	thread* info = (thread*) arg;
+	char buffer[1024] = {0};
+	// Read from command line, create message
+	// and pass it to message queue
+	do {
+		int valread = read(info->socket, buffer, 1024);
 
-	get_primary_ip(hostbuffer, sizeof(hostbuffer));
-	printf("%s\n", hostbuffer);
-	printf("This is the port: %s\n", port);
+		if (!valread) {
+			fprintf(stderr, "Failed to read from the socket into the buffer.\n");
+		}
 
-	if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
-		perror("socket failure");
-		exit(EXIT_FAILURE);
-	}
+		char* exit = "exit\n";
+		printf("From Client: %s", buffer);
+		char data;
+		*(info->flag) = strcmp(buffer, exit);
 
-	setsockopt(server_fd, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt));
+		if(!(*(info->flag))){
+			close(info->socket);
+			return arg;
+		}
 
-	address.sin_family = AF_INET;
-	address.sin_addr.s_addr = INADDR_ANY;
-	address.sin_port = htons(atoi(port));
+		recv(info->socket,&data,1, MSG_PEEK);
+		memset(buffer, 0, sizeof(buffer));
+	} while (1);
 
-	if (bind(server_fd, (struct sockaddr*)&address, sizeof(address)) < 0) {
-		perror("bind failed");
-		exit(EXIT_FAILURE);
-	}
-
-	if (listen(server_fd, 3) < 0) {
-		perror("listen");
-		exit(EXIT_FAILURE);
-	}
-
-	if ((new_socket = accept(server_fd, (struct sockaddr*) &address, (socklen_t*) &addrlen)) < 0) {
-		perror("accept");
-		exit(EXIT_FAILURE);
-	}
-
-	return new_socket;
+	return arg;
 }
