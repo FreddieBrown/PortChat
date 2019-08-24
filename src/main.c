@@ -5,9 +5,9 @@
 #include <unistd.h>
 #include "server.h"
 #include "tools.h"
+#include "client.h"
 
-void client(int port, char * addr);
-void server(int port);
+void start(int port);
 /**
  * @brief Main function
  *
@@ -26,15 +26,14 @@ int main(int argc, char* argv[]) {
 	}
 
     if(strcmp("-c", argv[1]) == 0 || strcmp("--client", argv[1]) == 0) {
-        int sock = atoi(argv[3]);
-        char * addr = argv[2];
+        int sock = setup_client(argv[3], argv[2]); 
         printf("CLIENT Socket: %i\n", sock);
-        client(sock, addr);
+        start(sock);
     }
     else if(strcmp("-s", argv[1]) == 0 || strcmp("--server", argv[1]) == 0) {
         int sock = setup_server(argv[2]);
         printf("SERVER Socket: %i\n", sock);
-        server(sock);
+        start(sock);
     }
     else {
         printf( "This is the help function!\n");
@@ -42,36 +41,19 @@ int main(int argc, char* argv[]) {
 	return 0;
 }
 
-/**
- * @brief Setup clientside functionality
- * 
- * This side is given an address and port and 
- * connects to a server. This will then listen 
- * to input from a server and will be able to send 
- * messages to the server.
- * 
- * @param port port to connect tp
- * @param addr address to connec to
- */
-void client(int port, char * addr) {
-    //int flag = 1;
-    printf("PORT: %i ADDR: %s\n", port, addr);
-    close(port);
-}
-
 
 /**
- * @brief Setup server functionality
+ * @brief Setup functionality
  * 
- * This function deals with server specific setup and 
+ * This function deals with setup and 
  * cleaning. It creates 2 threads which are used to getting 
  * messages from STDIN and then sending them to a connected 
- * client. The other thread will listen to the port for messages 
- * from the connected client.
+ * device. The other thread will listen to the port for messages 
+ * from the connected device.
  * 
  * @param port port which has been setup to listen/send
  */
-void server(int port) {
+void start(int port) {
     int flag = 1;
 	struct thread* create = malloc(sizeof(struct thread));
 	create->flag = &flag;
