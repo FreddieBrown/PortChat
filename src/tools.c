@@ -61,7 +61,7 @@ void get_primary_ip(char* buffer, size_t buflen)
  * @param port port which user wishes to connect to
  * @return int socket details
  */
-int setup(char* port) {
+int setup_server(char* port) {
 	int server_fd, new_socket;
 	struct sockaddr_in address;
 	int opt = 1;
