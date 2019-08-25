@@ -9,6 +9,8 @@
 #include "tools.h"
 #include "client.h"
 
+#define MAX_BUFFER_LEN 256
+
 void start(int, char*);
 void sig_handler(int);
 /**
@@ -23,7 +25,7 @@ void sig_handler(int);
  * @return int
  */
 int main(int argc, char* argv[]) {
-    char hostname[256];
+    char hostname[MAX_BUFFER_LEN] = {0};
     get_primary_ip(hostname, sizeof(hostname));
 	printf("%s\n", hostname);
 
