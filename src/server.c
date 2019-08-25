@@ -24,10 +24,7 @@ int setup_server(char* port) {
 	struct sockaddr_in address;
 	int opt = 1;
 	int addrlen = sizeof(address);
-	char hostbuffer[256];
 
-	get_primary_ip(hostbuffer, sizeof(hostbuffer));
-	printf("%s\n", hostbuffer);
 	printf("This is the port: %s\n", port);
 
 	if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {

@@ -24,12 +24,9 @@ int setup_client(char* port, char* addr) {
     printf("%s, %s", port, addr);
 
     int server_fd = 0;
-	char hostbuffer[256];
     struct sockaddr_in serv_addr;
     
 
-    get_primary_ip(hostbuffer, sizeof(hostbuffer));
-	printf("%s\n", hostbuffer);
 
 	printf("This is the port: %s\n", port);
 
