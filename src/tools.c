@@ -68,7 +68,7 @@ void* create_message(void* arg){
 	// Allocate a buffer to read into
 	char* buffer = calloc(MAX_MESSAGE_LEN, sizeof(char));
 
-	while (1) { 
+	while (1) {
 		// Read the message in from the command line
 		fgets(buffer, MAX_MESSAGE_LEN, stdin);
 

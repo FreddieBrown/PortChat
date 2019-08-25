@@ -4,6 +4,7 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <signal.h>
+
 #include "server.h"
 #include "tools.h"
 #include "client.h"
@@ -31,22 +32,22 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 
-    if(signal(SIGINT, sig_handler) == SIG_ERR){
+    if (signal(SIGINT, sig_handler) == SIG_ERR){
         printf("\n Failed to catch signal \n");
     }
 
-    if(strcmp("-c", argv[1]) == 0 || strcmp("--client", argv[1]) == 0) {
+    if (strcmp("-c", argv[1]) == 0 || strcmp("--client", argv[1]) == 0) {
         int sock = setup_client(argv[3], argv[2]); 
         printf("CLIENT Socket: %i\n", sock);
         start(sock, hostname);
     }
-    else if(strcmp("-s", argv[1]) == 0 || strcmp("--server", argv[1]) == 0) {
+    else if (strcmp("-s", argv[1]) == 0 || strcmp("--server", argv[1]) == 0) {
         int sock = setup_server(argv[2]);
         printf("SERVER Socket: %i\n", sock);
         start(sock, hostname);
     }
     else {
-        printf( "This is the help function!\n");
+        printf("This is the help function!\n");
     }
 	return 0;
 }
@@ -63,7 +64,7 @@ int main(int argc, char* argv[]) {
  * 
  * @param port port which has been setup to listen/send
  */
-void start(int port, char * hostname) {
+void start(int port, char* hostname) {
     int flag = 1;
 	struct thread* create = malloc(sizeof(struct thread));
 	create->flag = &flag;
@@ -75,10 +76,11 @@ void start(int port, char * hostname) {
 	readM->socket = port;
     readM->host = hostname;
 
-	if(pthread_create(&(create->id), NULL, create_message, (void*) create) != 0){
+	if (pthread_create(&(create->id), NULL, create_message, (void*) create) != 0){
 		printf("Error didn't create thread\n");
 	}
-	if(pthread_create(&(readM->id), NULL, read_message, (void*) readM) != 0){
+
+	if (pthread_create(&(readM->id), NULL, read_message, (void*) readM) != 0){
 		printf("Error didn't create thread\n");
 	}
 
