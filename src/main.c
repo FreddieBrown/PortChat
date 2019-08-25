@@ -25,6 +25,7 @@ void sig_handler(int);
  * @return int
  */
 int main(int argc, char* argv[]) {
+    int sock = 0;
     char hostname[MAX_BUFFER_LEN] = {0};
     get_primary_ip(hostname, sizeof(hostname));
 	printf("%s\n", hostname);
@@ -37,19 +38,31 @@ int main(int argc, char* argv[]) {
     if (signal(SIGINT, sig_handler) == SIG_ERR){
         printf("\n Failed to catch signal \n");
     }
+    int i;
+    int set = 0;
+    for (i = 1; i<argc; i++) {
 
-    if (strcmp("-c", argv[1]) == 0 || strcmp("--client", argv[1]) == 0) {
-        int sock = setup_client(argv[3], argv[2]);
-        printf("CLIENT Socket: %i\n", sock);
-        start(sock, hostname);
+        if ((strcmp("-c", argv[i]) == 0 || strcmp("--client", argv[i]) == 0) && !set) {
+            i += 2;
+            sock = setup_client(argv[i], argv[i-1]);
+            printf("CLIENT Socket: %i\n", sock);
+            set = 1;
+        
+        }
+        else if ((strcmp("-s", argv[i]) == 0 || strcmp("--server", argv[i]) == 0) && !set){
+            sock = setup_server(argv[++i]);
+            printf("SERVER Socket: %i\n", sock);
+            set = 1;
+        }
+        else {
+            printf("\nPortChat\n=========================\n");
+            printf("\nThis is the help function!\n");
+            printf("To open a socket to receive input, type: -s <port>\n");
+            printf("To connect to an open server, type: -c <address> <port>\n\n");
+        }
     }
-    else if (strcmp("-s", argv[1]) == 0 || strcmp("--server", argv[1]) == 0) {
-        int sock = setup_server(argv[2]);
-        printf("SERVER Socket: %i\n", sock);
+    if (set) {
         start(sock, hostname);
-    }
-    else {
-        printf("This is the help function!\n");
     }
 	return 0;
 }
