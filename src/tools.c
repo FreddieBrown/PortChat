@@ -62,13 +62,13 @@ void get_primary_ip(char* buffer, size_t buflen)
  * @param arg Informaiton for the thread
  * @return void* struct which was passed into the function
  */
-void* createMessage(void* arg){
+void* create_message(void* arg){
 	thread* info = (thread*) arg;
 
 	// Allocate a buffer to read into
 	char* buffer = calloc(MAX_MESSAGE_LEN, sizeof(char));
 
-	while (1) { 
+	while (1) {
 		// Read the message in from the command line
 		fgets(buffer, MAX_MESSAGE_LEN, stdin);
 
@@ -115,22 +115,21 @@ void* createMessage(void* arg){
  * @param arg Informaiton for the thread
  * @return void* struct which was passed into the function
  */
-void* readMessage(void* arg){
+void* read_message(void* arg){
 	thread* info = (thread*) arg;
 	char buffer[1024] = {0};
 	// Read from command line, create message
 	// and pass it to message queue
 	do {
-        
 		int valread = read(info->socket, buffer, 1024);
 
 		if (!valread) {
-			fprintf(stderr, "Lost connection to client\n");
+			fprintf(stderr, "Lost connection to client when trying to read a message.\n");
             exit(EXIT_SUCCESS);
 		}
 
 		char* exit = "exit\n";
-		printf("%s", buffer);
+		printf("read_message buffer contents: %s", buffer);
 		char data;
 		*(info->flag) = strcmp(buffer, exit);
 
@@ -139,7 +138,7 @@ void* readMessage(void* arg){
 			return arg;
 		}
 
-		recv(info->socket,&data,1, MSG_PEEK);
+		recv(info->socket, &data, 1, MSG_PEEK);
 		memset(buffer, 0, sizeof(buffer));
 	} while (1);
 

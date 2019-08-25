@@ -12,8 +12,7 @@ typedef struct thread{
 
 void get_primary_ip(char*, size_t);
 
-void* sendMessage(void*);
-void* createMessage(void*);
-void* readMessage(void*);
+void* create_message(void*);
+void* read_message(void*);
 
 #endif
