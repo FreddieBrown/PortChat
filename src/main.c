@@ -13,6 +13,7 @@
 
 void start(int, char*);
 void sig_handler(int);
+void help();
 /**
  * @brief Main function
  *
@@ -55,10 +56,7 @@ int main(int argc, char* argv[]) {
             set = 1;
         }
         else {
-            printf("\nPortChat\n=========================\n");
-            printf("\nThis is the help function!\n");
-            printf("To open a socket to receive input, type: -s <port>\n");
-            printf("To connect to an open server, type: -c <address> <port>\n\n");
+            help();
         }
     }
     if (set) {
@@ -119,4 +117,11 @@ void start(int port, char* hostname) {
 void sig_handler(int signo) {
     printf("\nSIGNAL NUMBER: %i\n", signo);
     exit(EXIT_SUCCESS);
+}
+
+void help() {
+    printf("\nPortChat\n=========================\n");
+    printf("\nThis is the help function!\n");
+    printf("To open a socket to receive input, type: -s <port>\n");
+    printf("To connect to an open server, type: -c <address> <port>\n\n");
 }
