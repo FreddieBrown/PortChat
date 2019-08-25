@@ -124,12 +124,12 @@ void* read_message(void* arg){
 		int valread = read(info->socket, buffer, 1024);
 
 		if (!valread) {
-			fprintf(stderr, "Lost connection to client\n");
+			fprintf(stderr, "Lost connection to client when trying to read a message.\n");
             exit(EXIT_SUCCESS);
 		}
 
 		char* exit = "exit\n";
-		printf("%s", buffer);
+		printf("read_message buffer contents: %s", buffer);
 		char data;
 		*(info->flag) = strcmp(buffer, exit);
 
@@ -138,7 +138,7 @@ void* read_message(void* arg){
 			return arg;
 		}
 
-		recv(info->socket,&data,1, MSG_PEEK);
+		recv(info->socket, &data, 1, MSG_PEEK);
 		memset(buffer, 0, sizeof(buffer));
 	} while (1);
 
