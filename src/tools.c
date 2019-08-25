@@ -62,7 +62,7 @@ void get_primary_ip(char* buffer, size_t buflen)
  * @param arg Informaiton for the thread
  * @return void* struct which was passed into the function
  */
-void* createMessage(void* arg){
+void* create_message(void* arg){
 	thread* info = (thread*) arg;
 
 	// Allocate a buffer to read into
@@ -115,13 +115,12 @@ void* createMessage(void* arg){
  * @param arg Informaiton for the thread
  * @return void* struct which was passed into the function
  */
-void* readMessage(void* arg){
+void* read_message(void* arg){
 	thread* info = (thread*) arg;
 	char buffer[1024] = {0};
 	// Read from command line, create message
 	// and pass it to message queue
 	do {
-        
 		int valread = read(info->socket, buffer, 1024);
 
 		if (!valread) {
