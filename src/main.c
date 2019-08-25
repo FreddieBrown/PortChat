@@ -75,10 +75,10 @@ void start(int port, char * hostname) {
 	readM->socket = port;
     readM->host = hostname;
 
-	if(pthread_create(&(create->id), NULL, createMessage, (void*) create) != 0){
+	if(pthread_create(&(create->id), NULL, create_message, (void*) create) != 0){
 		printf("Error didn't create thread\n");
 	}
-	if(pthread_create(&(readM->id), NULL, readMessage, (void*) readM) != 0){
+	if(pthread_create(&(readM->id), NULL, read_message, (void*) readM) != 0){
 		printf("Error didn't create thread\n");
 	}
 
