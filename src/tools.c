@@ -9,6 +9,8 @@
 
 #include "tools.h"
 
+#define MAX_MESSAGE_LEN 256
+
 /**
  * @brief Get the local IP information of the computer
  *
@@ -62,23 +64,42 @@ void get_primary_ip(char* buffer, size_t buflen)
  */
 void* createMessage(void* arg){
 	thread* info = (thread*) arg;
-	char buffer[1024] = {0};
-	// Read from command line, create message
-	// and pass it to message queue
-    char fullbuf[1024] = {0};
-	while (1) { 
-		fgets (buffer, 100, stdin);
-        sprintf(fullbuf, "%s: %s", info->host, buffer);
-		send(info->socket, fullbuf, strlen(fullbuf), 0);
 
+	// Allocate a buffer to read into
+	char* buffer = calloc(MAX_MESSAGE_LEN, sizeof(char));
+
+	while (1) { 
+		// Read the message in from the command line
+		fgets(buffer, MAX_MESSAGE_LEN, stdin);
+
+		// Calculate the size of the resulting formatted message
+		size_t msg_len = strlen(buffer);
+		size_t hst_len = strlen(info->host);
+		size_t fmt_len = msg_len + hst_len + 2;
+
+		// Allocate enough memory for the message
+		char* formatted_buffer = calloc(fmt_len, sizeof(char));
+
+		// Format the message and send it through the socket
+        sprintf(formatted_buffer, "%s: %s", info->host, buffer);
+		send(info->socket, formatted_buffer, fmt_len, 0);
+
+		// If something went wrong with the socket connection, free the
+		// memory
 		if (!*(info->flag)){
+			free(buffer);
+			free(formatted_buffer);
 			printf("Goodbye\n");
 			exit(EXIT_SUCCESS);
 		}
 
+		// Clear the buffer and free the formatted one
 		memset(buffer, 0, strlen(buffer));
-        memset(fullbuf, 0, strlen(fullbuf));
+		free(formatted_buffer);
 	}
+
+	// Free the original buffer we made for messages
+	free(buffer);
 
 	return arg;
 }
