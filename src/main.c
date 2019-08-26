@@ -1,9 +1,10 @@
-#include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
 #include <pthread.h>
 #include <unistd.h>
 #include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 #include "server.h"
 #include "tools.h"
@@ -11,7 +12,7 @@
 
 #define MAX_BUFFER_LEN 256
 
-void start(int, char*);
+void start(int, char*, FILE*);
 void sig_handler(int);
 void help();
 /**
@@ -30,6 +31,9 @@ int main(int argc, char* argv[]) {
     char hostname[MAX_BUFFER_LEN] = {0};
     get_primary_ip(hostname, sizeof(hostname));
 	printf("%s\n", hostname);
+    FILE* logging = NULL;
+    char* port;
+    char* addr;
 
 	if (argc < 2) {
 		fprintf(stderr, "Please enter a port number to use for the setup.\n");
@@ -45,22 +49,40 @@ int main(int argc, char* argv[]) {
 
         if ((strcmp("-c", argv[i]) == 0 || strcmp("--client", argv[i]) == 0) && !set) {
             i += 2;
-            sock = setup_client(argv[i], argv[i-1]);
-            printf("CLIENT Socket: %i\n", sock);
             set = 1;
-        
+            port = argv[i];
+            addr = argv[i-1];
+      
         }
         else if ((strcmp("-s", argv[i]) == 0 || strcmp("--server", argv[i]) == 0) && !set){
-            sock = setup_server(argv[++i]);
-            printf("SERVER Socket: %i\n", sock);
-            set = 1;
+            set = 2;
+            port = argv[++i];
+        }
+        else if(strcmp("-l", argv[i]) == 0 || strcmp("--log", argv[i]) == 0) {
+            printf("Setting up logging\n");
+            logging = fopen("./messages.txt", "a");
+            // Write the date and time to the file
+            time_t rawtime;
+            struct tm* timeinfo;
+            time(&rawtime);
+            timeinfo = localtime(&rawtime);
+            fprintf(logging, "%s\n", asctime(timeinfo));
         }
         else {
             help();
         }
     }
+    switch(set){
+        case 1: sock = setup_client(port, addr);
+                printf("CLIENT Socket: %i\n", sock);
+                break;
+        case 2: sock = setup_server(port);
+                printf("SERVER Socket: %i\n", sock);
+                break;
+    }
+
     if (set) {
-        start(sock, hostname);
+        start(sock, hostname, logging);
     }
 	return 0;
 }
@@ -76,18 +98,22 @@ int main(int argc, char* argv[]) {
  * from the connected device.
  *
  * @param port port which has been setup to listen/send
+ * @param hostname name of the users machine
+ * @param fptr Logging file which output is written to
  */
-void start(int port, char* hostname) {
+void start(int port, char* hostname, FILE* fptr) {
     int flag = 1;
 	struct thread* create = malloc(sizeof(struct thread));
 	create->flag = &flag;
 	create->socket = port;
     create->host = hostname;
+    create->log = fptr;
 
 	struct thread* readM = malloc(sizeof(struct thread));
 	readM->flag = &flag;
 	readM->socket = port;
     readM->host = hostname;
+    readM->log = fptr;
 
 	if (pthread_create(&(create->id), NULL, create_message, (void*) create) != 0){
 		printf("Failed to initialise or create the create_message thread.\n");
@@ -123,5 +149,6 @@ void help() {
     printf("\nPortChat\n=========================\n");
     printf("\nThis is the help function!\n");
     printf("To open a socket to receive input, type: -s <port>\n");
-    printf("To connect to an open server, type: -c <address> <port>\n\n");
+    printf("To connect to an open server, type: -c <address> <port>\n");
+    printf("To open logging, add -l\n\n");
 }

@@ -10,6 +10,8 @@
 #include "tools.h"
 
 #define MAX_MESSAGE_LEN 256
+#define TRUE 1
+#define FALSE 0
 
 /**
  * @brief Get the local IP information of the computer
@@ -82,6 +84,7 @@ void* create_message(void* arg){
 
 		// Format the message and send it through the socket
         sprintf(formatted_buffer, "%s: %s", info->host, buffer);
+        logger(formatted_buffer, info->log, FALSE);
 		send(info->socket, formatted_buffer, fmt_len, 0);
 
 		// If something went wrong with the socket connection, free the
@@ -129,7 +132,7 @@ void* read_message(void* arg){
 		}
 
 		char* exit = "exit\n";
-		printf("read_message buffer contents: %s", buffer);
+        logger(buffer, info->log, TRUE);
 		char data;
 		*(info->flag) = strcmp(buffer, exit);
 
@@ -143,4 +146,19 @@ void* read_message(void* arg){
 	} while (1);
 
 	return arg;
+}
+ 
+void logger(char* message, FILE* fptr, int tf){
+    if (fptr != NULL && tf == TRUE) {
+        fprintf(fptr,"CLIENT: %s",message);
+    }
+    else if (fptr != NULL) {
+        fprintf(fptr,"%s",message);
+    }
+
+    if (tf == TRUE) {
+        printf("%s", message);
+    }
+
+    
 }
