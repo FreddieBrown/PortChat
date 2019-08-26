@@ -1,0 +1,6 @@
+Mon Aug 26 21:12:36 2019
+
+CLIENT: Hello
+10.0.9.106: How are you?
+CLIENT: Not bad, you?
+10.0.9.106: Excellent
