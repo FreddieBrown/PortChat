@@ -1,0 +1,17 @@
+name: PortChat Basic Workflow
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: [ubuntu-latest, macOS-latest]
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: obj
+      run: mkdir ./obj
+    - name: make clean
+      run: make clean
+    - name: make build
+      run: make build
