@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
     char* port;
     char* addr;
 
-    int set = 0;
+    int mode = UNKNOWN;
 
 	if (argc == 1) {
 		help();
@@ -46,15 +46,15 @@ int main(int argc, char* argv[]) {
     }
 
     for (int i = 1; i < argc; i++) {
-        if ((strcmp("-c", argv[i]) == 0 || strcmp("--client", argv[i]) == 0) && !set) {
+        if ((strcmp("-c", argv[i]) == 0 || strcmp("--client", argv[i]) == 0) && mode != UNKNOWN) {
             i += 2;
-            set = 1;
+            mode = CLIENT;
             port = argv[i];
             addr = argv[i-1];
       
         }
-        else if ((strcmp("-s", argv[i]) == 0 || strcmp("--server", argv[i]) == 0) && !set){
-            set = 2;
+        else if ((strcmp("-s", argv[i]) == 0 || strcmp("--server", argv[i]) == 0) && mode != UNKNOWN){
+            mode = SERVER;
             port = argv[++i];
         }
         else if (strcmp("-l", argv[i]) == 0 || strcmp("--log", argv[i]) == 0) {
@@ -72,16 +72,16 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    switch(set){
-        case 1: sock = setup_client(port, addr);
+    switch (mode){
+        case CLIENT: sock = setup_client(port, addr);
                 printf("CLIENT Socket: %i\n", sock);
                 break;
-        case 2: sock = setup_server(port);
+        case SERVER: sock = setup_server(port);
                 printf("SERVER Socket: %i\n", sock);
                 break;
     }
 
-    if (set) {
+    if (mode != UNKNOWN) {
         start(sock, hostname, logging);
     }
 
