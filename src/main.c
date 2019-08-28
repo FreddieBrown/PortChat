@@ -6,15 +6,13 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include "main.h"
 #include "server.h"
 #include "tools.h"
 #include "client.h"
 
 #define MAX_BUFFER_LEN 256
 
-void start(int, char*, FILE*);
-void sig_handler(int);
-void help();
 /**
  * @brief Main function
  *
