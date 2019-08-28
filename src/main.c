@@ -36,9 +36,9 @@ int main(int argc, char* argv[]) {
 
     int set = 0;
 
-	if (argc < 2) {
-		fprintf(stderr, "Please enter a port number to use for the setup.\n");
-		return 1;
+	if (argc == 1) {
+		help();
+		return 0;
 	}
 
     if (signal(SIGINT, sig_handler) == SIG_ERR){
@@ -46,7 +46,6 @@ int main(int argc, char* argv[]) {
     }
 
     for (int i = 1; i < argc; i++) {
-
         if ((strcmp("-c", argv[i]) == 0 || strcmp("--client", argv[i]) == 0) && !set) {
             i += 2;
             set = 1;
