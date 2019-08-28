@@ -27,7 +27,7 @@
 int main(int argc, char* argv[]) {
     char hostname[MAX_BUFFER_LEN] = {0};
     get_primary_ip(hostname, sizeof(hostname));
-	printf("%s\n", hostname);
+	printf("Your hostname/ip is: %s\n", hostname);
 
     int sock = 0;
     FILE* logging = NULL;
@@ -51,7 +51,6 @@ int main(int argc, char* argv[]) {
             mode = CLIENT;
             port = argv[i];
             addr = argv[i-1];
-      
         }
         else if ((strcmp("-s", argv[i]) == 0 || strcmp("--server", argv[i]) == 0) && mode != UNKNOWN){
             mode = SERVER;
