@@ -25,13 +25,16 @@
  * @return int
  */
 int main(int argc, char* argv[]) {
-    int sock = 0;
     char hostname[MAX_BUFFER_LEN] = {0};
     get_primary_ip(hostname, sizeof(hostname));
 	printf("%s\n", hostname);
+
+    int sock = 0;
     FILE* logging = NULL;
     char* port;
     char* addr;
+
+    int set = 0;
 
 	if (argc < 2) {
 		fprintf(stderr, "Please enter a port number to use for the setup.\n");
@@ -41,9 +44,8 @@ int main(int argc, char* argv[]) {
     if (signal(SIGINT, sig_handler) == SIG_ERR){
         printf("\n Failed to catch signal \n");
     }
-    int i;
-    int set = 0;
-    for (i = 1; i<argc; i++) {
+
+    for (int i = 1; i < argc; i++) {
 
         if ((strcmp("-c", argv[i]) == 0 || strcmp("--client", argv[i]) == 0) && !set) {
             i += 2;
@@ -56,7 +58,7 @@ int main(int argc, char* argv[]) {
             set = 2;
             port = argv[++i];
         }
-        else if(strcmp("-l", argv[i]) == 0 || strcmp("--log", argv[i]) == 0) {
+        else if (strcmp("-l", argv[i]) == 0 || strcmp("--log", argv[i]) == 0) {
             printf("Setting up logging\n");
             logging = fopen("./messages.txt", "a");
             // Write the date and time to the file
@@ -70,6 +72,7 @@ int main(int argc, char* argv[]) {
             help();
         }
     }
+
     switch(set){
         case 1: sock = setup_client(port, addr);
                 printf("CLIENT Socket: %i\n", sock);
@@ -82,6 +85,7 @@ int main(int argc, char* argv[]) {
     if (set) {
         start(sock, hostname, logging);
     }
+
 	return 0;
 }
 
