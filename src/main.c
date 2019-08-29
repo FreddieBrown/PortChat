@@ -6,15 +6,13 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include "main.h"
 #include "server.h"
 #include "tools.h"
 #include "client.h"
 
 #define MAX_BUFFER_LEN 256
 
-void start(int, char*, FILE*);
-void sig_handler(int);
-void help();
 /**
  * @brief Main function
  *
@@ -27,38 +25,38 @@ void help();
  * @return int
  */
 int main(int argc, char* argv[]) {
-    int sock = 0;
     char hostname[MAX_BUFFER_LEN] = {0};
     get_primary_ip(hostname, sizeof(hostname));
-	printf("%s\n", hostname);
+	printf("Your hostname/ip is: %s\n", hostname);
+
+    int sock = 0;
     FILE* logging = NULL;
     char* port;
     char* addr;
 
-	if (argc < 2) {
-		fprintf(stderr, "Please enter a port number to use for the setup.\n");
-		return 1;
+    int mode = UNKNOWN;
+
+	if (argc == 1) {
+		help();
+		return 0;
 	}
 
     if (signal(SIGINT, sig_handler) == SIG_ERR){
         printf("\n Failed to catch signal \n");
     }
-    int i;
-    int set = 0;
-    for (i = 1; i<argc; i++) {
 
-        if ((strcmp("-c", argv[i]) == 0 || strcmp("--client", argv[i]) == 0) && !set) {
+    for (int i = 1; i < argc; i++) {
+        if ((strcmp("-c", argv[i]) == 0 || strcmp("--client", argv[i]) == 0) && mode != UNKNOWN) {
             i += 2;
-            set = 1;
+            mode = CLIENT;
             port = argv[i];
             addr = argv[i-1];
-      
         }
-        else if ((strcmp("-s", argv[i]) == 0 || strcmp("--server", argv[i]) == 0) && !set){
-            set = 2;
+        else if ((strcmp("-s", argv[i]) == 0 || strcmp("--server", argv[i]) == 0) && mode != UNKNOWN){
+            mode = SERVER;
             port = argv[++i];
         }
-        else if(strcmp("-l", argv[i]) == 0 || strcmp("--log", argv[i]) == 0) {
+        else if (strcmp("-l", argv[i]) == 0 || strcmp("--log", argv[i]) == 0) {
             printf("Setting up logging\n");
             logging = fopen("./messages.txt", "a");
             // Write the date and time to the file
@@ -72,18 +70,20 @@ int main(int argc, char* argv[]) {
             help();
         }
     }
-    switch(set){
-        case 1: sock = setup_client(port, addr);
+
+    switch (mode){
+        case CLIENT: sock = setup_client(port, addr);
                 printf("CLIENT Socket: %i\n", sock);
                 break;
-        case 2: sock = setup_server(port);
+        case SERVER: sock = setup_server(port);
                 printf("SERVER Socket: %i\n", sock);
                 break;
     }
 
-    if (set) {
+    if (mode != UNKNOWN) {
         start(sock, hostname, logging);
     }
+
 	return 0;
 }
 
