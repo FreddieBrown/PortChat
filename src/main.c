@@ -46,13 +46,13 @@ int main(int argc, char* argv[]) {
     }
 
     for (int i = 1; i < argc; i++) {
-        if ((strcmp("-c", argv[i]) == 0 || strcmp("--client", argv[i]) == 0) && mode != UNKNOWN) {
+        if ((strcmp("-c", argv[i]) == 0 || strcmp("--client", argv[i]) == 0) && mode == UNKNOWN) {
             i += 2;
             mode = CLIENT;
             port = argv[i];
             addr = argv[i-1];
         }
-        else if ((strcmp("-s", argv[i]) == 0 || strcmp("--server", argv[i]) == 0) && mode != UNKNOWN){
+        else if ((strcmp("-s", argv[i]) == 0 || strcmp("--server", argv[i]) == 0) && mode == UNKNOWN){
             mode = SERVER;
             port = argv[++i];
         }
